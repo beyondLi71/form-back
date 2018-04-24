@@ -1,0 +1,5 @@
+rootProject.name = 'form-back'
+include 'back-web'
+include 'back-interface-service'
+include 'back-identity-service'
+include 'common'
