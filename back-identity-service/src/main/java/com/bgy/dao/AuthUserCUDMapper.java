@@ -3,6 +3,7 @@ package com.bgy.dao;
 import com.bgy.entity.po.AuthUserTokenLogPO;
 import com.bgy.entity.po.AuthUserTokenPO;
 import org.apache.ibatis.annotations.Insert;
+import org.apache.ibatis.annotations.Update;
 
 /**
  * @author yyg
@@ -28,5 +29,14 @@ public interface AuthUserCUDMapper {
     @Insert("insert  into auth_user_token_log (user_id,user_create_time,user_lose_time,token,create_time,create_by) values"
             + "(#{userId},#{userCreateTime},#{userLoseTime},#{token},#{createTime},#{createBy}) ")
     void addUserTokenLog(AuthUserTokenLogPO authUserTokenLogPO);
+
+    /**
+     * 更新用户的token创建时间
+     *
+     * @param authUserTokenPO
+     */
+    @Update("UPDATE  auth_user_token SET user_create_time =#{userCreateTime} WHERE id=#{id} and token=#{token} ")
+    void updateUserToken(AuthUserTokenPO authUserTokenPO);
+
 
 }

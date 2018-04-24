@@ -2,6 +2,7 @@ package com.bgy.service;
 
 import com.bgy.common.utils.apiresult.AbstractApiResult;
 import com.bgy.entity.dto.AuthUserLoginDTO;
+import com.bgy.entity.po.AuthUserInfoPO;
 import org.springframework.validation.annotation.Validated;
 
 import javax.servlet.http.HttpServletRequest;
@@ -19,4 +20,6 @@ public interface AuthUserService {
     AbstractApiResult loginCheck(@Valid AuthUserLoginDTO dto, HttpServletResponse response) throws Exception;
 
     void logout(HttpServletRequest request, HttpServletResponse response);
+
+    AuthUserInfoPO getLoginUserInfo(String token);
 }

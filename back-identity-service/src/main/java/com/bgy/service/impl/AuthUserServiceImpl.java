@@ -6,10 +6,13 @@ import com.bgy.common.utils.exception.ExceptionManager;
 import com.bgy.common.utils.mapper.MapperUtils;
 import com.bgy.dao.AuthUserCUDMapper;
 import com.bgy.dao.AuthUserQueryMapper;
+import com.bgy.entity.dto.AuthUserInfoDTO;
 import com.bgy.entity.dto.AuthUserLoginDTO;
+import com.bgy.entity.po.AuthUserInfoPO;
 import com.bgy.entity.po.AuthUserPO;
 import com.bgy.entity.po.AuthUserTokenLogPO;
 import com.bgy.entity.po.AuthUserTokenPO;
+import com.bgy.entity.vo.AuthUserTokenVO;
 import com.bgy.service.AuthUserService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -18,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.time.Duration;
 import java.time.LocalDateTime;
 
 /**
@@ -44,6 +48,10 @@ public class AuthUserServiceImpl implements AuthUserService {
     //cookie 的key
     @Value("${key}")
     String key;
+
+    //cookie 的key
+    @Value("${hour}")
+    Long hour;
 
     /**
      * 登录验证方法
@@ -95,4 +103,43 @@ public class AuthUserServiceImpl implements AuthUserService {
         TokenUtils.delectCookieByName(request, response, key);
     }
 
+
+    /**
+     * 获取登录用户的基本信息
+     *
+     * @param token
+     * @return
+     */
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public AuthUserInfoPO getLoginUserInfo(String token) {
+        //获取用户token信息
+        AuthUserTokenVO authUserTokenVO = continuedLifeForToken(token);
+        //查询用户信息
+        AuthUserInfoDTO authUserInfoDTO = MapperUtils.mapperBean(authUserTokenVO, AuthUserInfoDTO.class);
+        AuthUserInfoPO authUserInfoPO = authUserQueryMapper.selectUeerInfoOne(authUserInfoDTO);
+        //todo 查询对应权限
+        return authUserInfoPO;
+    }
+
+    /**
+     * 检验token是否过期，不过期继续续命
+     *
+     * @param token
+     * @return
+     */
+    private AuthUserTokenVO continuedLifeForToken(String token) {
+        AuthUserTokenVO authUserTokenVO = authUserQueryMapper.selectTokenInfoOne(token);
+        Duration duration = Duration.between(authUserTokenVO.getUserCreateTime(), LocalDateTime.now());
+        Long hours = duration.toHours();
+        if (hours > hour) {
+            throw exceptionManager.createByCode("IDEN_ERR_0005");
+        }
+        //续命token
+        AuthUserTokenPO authUserTokenPO = MapperUtils.mapperBean(authUserTokenVO, AuthUserTokenPO.class);
+        authUserTokenPO.setUpdateTime(LocalDateTime.now());
+        authUserTokenPO.setUserCreateTime(LocalDateTime.now());
+        authUserCUDMapper.updateUserToken(authUserTokenPO);
+        return authUserTokenVO;
+    }
 }
