@@ -19,9 +19,9 @@ CREATE TABLE IF NOT EXISTS `auth_function` (
   `serial_num` int(11) DEFAULT NULL COMMENT '排序编号',
   `accordion` varchar(255) DEFAULT NULL COMMENT '是否是顶级菜单',
   `create_time` datetime NOT NULL COMMENT '创建时间',
-  `create_by` int(11) NOT NULL COMMENT '创建人',
+  `create_by` varchar(50) NOT NULL COMMENT '创建人',
   `update_time` datetime DEFAULT NULL COMMENT '修改时间',
-  `update_by` int(11) DEFAULT NULL COMMENT '修改人',
+  `update_by` varchar(50) DEFAULT NULL COMMENT '修改人',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='用户权限菜单表';
 
@@ -33,9 +33,9 @@ CREATE TABLE IF NOT EXISTS `auth_role` (
   `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键',
   `name` varchar(255) DEFAULT NULL COMMENT '角色名称',
   `create_time` datetime NOT NULL COMMENT '创建时间',
-  `create_by` int(11) NOT NULL COMMENT '创建人',
+  `create_by` varchar(50) NOT NULL COMMENT '创建人',
   `update_time` datetime DEFAULT NULL COMMENT '修改时间',
-  `update_by` int(11) DEFAULT NULL COMMENT '修改人',
+  `update_by` varchar(50) DEFAULT NULL COMMENT '修改人',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='用户角色表';
 
@@ -70,9 +70,9 @@ CREATE TABLE IF NOT EXISTS  `auth_user_info` (
   `user_name` varchar(255) DEFAULT NULL COMMENT '用户名称',
   `user_phone` varchar(255) DEFAULT NULL COMMENT '用户电话',
 `create_time` datetime NOT NULL COMMENT '创建时间',
-  `create_by` int(11) NOT NULL COMMENT '创建人',
+  `create_by` varchar(50) NOT NULL COMMENT '创建人',
   `update_time` datetime DEFAULT NULL COMMENT '修改时间',
-  `update_by` int(11) DEFAULT NULL COMMENT '修改人',
+  `update_by` varchar(50) DEFAULT NULL COMMENT '修改人',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='用户基本信息表';
 
@@ -95,9 +95,9 @@ CREATE TABLE IF NOT EXISTS `auth_user_token` (
   `token` varchar(255) DEFAULT NULL COMMENT '用户token',
   `user_create_time` datetime DEFAULT NULL COMMENT 'token创建时间',
   `create_time` datetime NOT NULL COMMENT '创建时间',
-  `create_by` int(11) NOT NULL COMMENT '创建人',
+  `create_by` varchar(50) NOT NULL COMMENT '创建人',
   `update_time` datetime DEFAULT NULL COMMENT '修改时间',
-  `update_by` int(11) DEFAULT NULL COMMENT '修改人',
+  `update_by` varchar(50) DEFAULT NULL COMMENT '修改人',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='用户token表';
 
@@ -111,9 +111,9 @@ CREATE TABLE IF NOT EXISTS `auth_user_token_log` (
   `user_create_time` datetime DEFAULT NULL COMMENT '用户创建时间',
   `user_lose_time` datetime DEFAULT NULL COMMENT '用户失效时间',
   `token` varchar(255) DEFAULT NULL COMMENT 'token值',
-`create_time` datetime NOT NULL COMMENT '创建时间',
-  `create_by` int(11) NOT NULL COMMENT '创建人',
+  `create_time` datetime NOT NULL COMMENT '创建时间',
+  `create_by` varchar(50) NOT NULL COMMENT '创建人',
   `update_time` datetime DEFAULT NULL COMMENT '修改时间',
-  `update_by` int(11) DEFAULT NULL COMMENT '修改人',
+  `update_by` varchar(50) DEFAULT NULL COMMENT '修改人',
   PRIMARY KEY (`id`)
 )ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='用户token历史记录表';

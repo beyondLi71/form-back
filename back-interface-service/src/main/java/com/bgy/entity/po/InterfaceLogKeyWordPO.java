@@ -15,6 +15,8 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class InterfaceLogKeyWordPO {
+    //id
+    private Integer id;
     //接口名
     private String interfaceName;
     //ip地址

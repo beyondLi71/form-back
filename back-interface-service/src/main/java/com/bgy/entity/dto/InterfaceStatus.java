@@ -7,7 +7,7 @@ package com.bgy.entity.dto;
  */
 
 public enum InterfaceStatus {
-    OPEN("开启"),CLOSE("关闭");
+    OPEN("启用"),CLOSE("禁用");
 
     public String name;
     InterfaceStatus(String name) {

@@ -41,7 +41,7 @@ public class GetLoginIngfoAop {
      * @return
      * @throws Throwable
      */
-    @Before("execution (* com.bgy.controller..*.*(..))  &&"
+    @Before("execution (* com.bgy.controller..*(..))  &&"
             + "!execution(* com.bgy.controller.LoginController.*(..))")
     public Object beforeCheckToken() throws Throwable {
         //获取token

@@ -19,7 +19,8 @@ CREATE TABLE IF NOT EXISTS `sys_interface_manager` (
   `update_time` datetime NOT NULL COMMENT '修改时间',
    `create_by` varchar(255) NOT NULL COMMENT '创建人',
   `update_by` varchar(255) NOT NULL COMMENT '修改人',
-  `remark` varchar(255) NOT NULL COMMENT '备注',
+  `remark` varchar(255) DEFAULT NULL COMMENT '备注',
+  `mark` varchar(255) NOT NULL COMMENT '是否删除',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -33,11 +34,27 @@ CREATE TABLE IF NOT EXISTS `sys_interface_manager_details` (
   `request` varchar(255) NOT NULL COMMENT '请求参数',
   `inface_url` varchar(255) NOT NULL COMMENT '接口地址',
   `start_time` datetime NOT NULL COMMENT '调用时间',
-  `response` varchar(255) NOT NULL COMMENT '返回结果',
+  `response` text NOT NULL COMMENT '返回结果',
   `create_time` datetime NOT NULL COMMENT '创建时间',
   `update_time` datetime NOT NULL COMMENT '修改时间',
    `create_by` varchar(255) NOT NULL COMMENT '创建人',
   `update_by` varchar(255) NOT NULL COMMENT '修改人',
-  `remark` varchar(255) NOT NULL COMMENT '备注',
+  `remark` varchar(255) DEFAULT NULL COMMENT '备注',
+  `mark` varchar(255) NOT NULL COMMENT '是否删除',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+---白名单
+CREATE TABLE IF NOT EXISTS `sys_whitename_manager` (
+  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键',
+  `url_start` varchar(255) NOT NULL COMMENT 'url起始',
+  `url_end` varchar(255) NOT NULL COMMENT 'url结束',
+  `status` varchar(255) NOT NULL COMMENT '状态',
+  `create_time` datetime NOT NULL COMMENT '创建时间',
+  `update_time` datetime NOT NULL COMMENT '修改时间',
+   `create_by` varchar(255) NOT NULL COMMENT '创建人',
+  `update_by` varchar(255) NOT NULL COMMENT '修改人',
+  `remark` varchar(255)  NOT NULL COMMENT '备注',
+  `mark` varchar(255) NOT NULL COMMENT '是否删除',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
