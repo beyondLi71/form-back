@@ -4,40 +4,25 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.validator.constraints.NotBlank;
 
 import java.time.LocalDateTime;
 
 /**
- * @author yyg
- * @date 2018/4/23 17:32
- * @desc 用户基本信息实体DTO
- */
+* @author yyg
+* @date 2018/4/25 10:49
+* @desc  系统角色分页入参实体DTO
+*/
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class AuthUserInfoDTO {
+public class GetAuthRoleDTO {
 
-    //主键
-    @ApiModelProperty(value = "主键", example = "", hidden = true)
-    private Long id;
-
-    //用户id
-    @ApiModelProperty(value = "用户ID", example = "", hidden = true)
-    private Long userId;
-
-    //用户名字
-    @ApiModelProperty(value = "用户名称", example = "")
-    @NotBlank(message = "IDEN_ERR_0002")
-    private String userName;
-
-    //用户联系电话
-    @ApiModelProperty(value = "用户联系电话", example = "")
-    @NotBlank(message = "IDEN_ERR_0006")
-    private String userPhone;
+    //角色名称
+    @ApiModelProperty(value = "角色名称", example = "")
+    private String name;
 
     // 创建时间
-    @ApiModelProperty(value = "创建时间", example = "", hidden = true)
+    @ApiModelProperty(value = "创建时间", example = "")
     private LocalDateTime createTime;
 
     //创建人

@@ -24,4 +24,7 @@ public class AuthUserLoginDTO {
     @NotBlank(message = "IDEN_ERR_0002")
     private String pwd;
 
+    @ApiModelProperty(value = "删除标记", example = "", hidden = true)
+    private String isDelete;
+
 }

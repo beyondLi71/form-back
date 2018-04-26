@@ -7,26 +7,20 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 
 /**
- * @author yyg
- * @date 2018/4/23 17:32
- * @desc 用户基本信息实体
- */
+* @author yyg
+* @date 2018/4/25 10:49
+* @desc  系统角色实体
+*/
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class AuthUserInfoPO {
+public class AuthRolePO {
 
     //主键
     private Long id;
 
-    //用户id
-    private Long userId;
-
-    //用户名字
-    private String userName;
-
-    //用户联系电话
-    private String userPhone;
+    //用户名
+    private String name;
 
     // 创建时间
     private LocalDateTime createTime;

@@ -47,7 +47,8 @@ public class GetLoginIngfoAop {
         //获取token
         String token = getToken();
         AuthUserInfoPO authUserInfoPO = authUserService.getLoginUserInfo(token);
-        userBaseInfoDTO.setId(authUserInfoPO.getId());
+       //用户登录表的主键id也是用户基本信息的userId
+        userBaseInfoDTO.setId(authUserInfoPO.getUserId());
         userBaseInfoDTO.setUserName(authUserInfoPO.getUserName());
         userBaseInfoDTO.setUserPhone(authUserInfoPO.getUserPhone());
         return authUserInfoPO;
@@ -71,7 +72,7 @@ public class GetLoginIngfoAop {
             }
         }
         if (token == null) {
-            throw exceptionManager.createByCode("IDEN_ERR_0005");
+            throw exceptionManager.createByCode("IDEN_ERR_0010");
         }
         return token;
     }
