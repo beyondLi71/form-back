@@ -35,13 +35,11 @@ public class AuthUserTokenLogPO {
     private LocalDateTime createTime;
 
     //创建人
-    private Long createBy;
+    private String createBy;
 
     //修改时间
     private LocalDateTime updateTime;
 
     //修改人
-    private Long updateBy;
-
-
+    private String updateBy;
 }

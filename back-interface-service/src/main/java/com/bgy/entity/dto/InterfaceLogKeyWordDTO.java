@@ -17,7 +17,8 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 public class InterfaceLogKeyWordDTO {
-
+    @ApiModelProperty(value = "id", required = true, example = "2")
+    private Integer id;
     @ApiModelProperty(value = "接口名", required = true, example = "admin")
     private String interfaceName;
     @ApiModelProperty(value = "ip地址", required = true, example = "192.168.1.1")

@@ -15,7 +15,10 @@ import javax.validation.constraints.NotNull;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class InterfaceMangerDTO {
+public class InterfaceMangerUpdateDTO {
+    @ApiModelProperty(value = "id", required = true, example = "10")
+    @NotNull(message = "INTE_INFO_0000")
+    private Integer id;
     @ApiModelProperty(value = "接口名", required = true, example = "admin")
     @NotNull(message = "INTE_INFO_0001")
     private String interfaceName;
@@ -30,6 +33,5 @@ public class InterfaceMangerDTO {
     private InterfaceStatus status;
     @ApiModelProperty(value = "当前用户", required = true, example = "admin")
     private String userId;
-
 }
 

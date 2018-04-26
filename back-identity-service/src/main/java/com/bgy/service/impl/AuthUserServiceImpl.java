@@ -78,14 +78,14 @@ public class AuthUserServiceImpl implements AuthUserService {
         AuthUserTokenPO authUserTokenPO = new AuthUserTokenPO();
         authUserTokenPO.setToken(token);
         authUserTokenPO.setUserId(user.getId());
-        authUserTokenPO.setCreateBy(user.getId());
+        authUserTokenPO.setCreateBy(user.getId().toString());
         authUserTokenPO.setCreateTime(LocalDateTime.now());
         authUserTokenPO.setUserCreateTime(LocalDateTime.now());
         authUserCUDMapper.addUserToken(authUserTokenPO);
         //写入token历史记录表
         AuthUserTokenLogPO authUserTokenLogPO = MapperUtils.mapperBean(authUserTokenPO, AuthUserTokenLogPO.class);
         authUserTokenLogPO.setUserLoseTime(LocalDateTime.now());
-        authUserTokenLogPO.setCreateBy(user.getId());
+        authUserTokenLogPO.setCreateBy(user.getId().toString());
         authUserTokenLogPO.setCreateTime(LocalDateTime.now());
         authUserCUDMapper.addUserTokenLog(authUserTokenLogPO);
         return AbstractApiResult.success("success");
