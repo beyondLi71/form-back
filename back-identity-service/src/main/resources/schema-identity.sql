@@ -22,6 +22,7 @@ CREATE TABLE IF NOT EXISTS `auth_function` (
   `create_by` varchar(50) NOT NULL COMMENT '创建人',
   `update_time` datetime DEFAULT NULL COMMENT '修改时间',
   `update_by` varchar(50) DEFAULT NULL COMMENT '修改人',
+  `level` int(11) DEFAULT NULL COMMENT '级别',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='用户权限菜单表';
 
@@ -36,6 +37,7 @@ CREATE TABLE IF NOT EXISTS `auth_role` (
   `create_by` varchar(50) NOT NULL COMMENT '创建人',
   `update_time` datetime DEFAULT NULL COMMENT '修改时间',
   `update_by` varchar(50) DEFAULT NULL COMMENT '修改人',
+  `is_delete` varchar(25) COLLATE utf8mb4_unicode_ci DEFAULT 'ENABLE' COMMENT '是否删除 DISABLE:已删除 ENABLE:未删除',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='用户角色表';
 
@@ -73,6 +75,7 @@ CREATE TABLE IF NOT EXISTS  `auth_user_info` (
   `create_by` varchar(50) NOT NULL COMMENT '创建人',
   `update_time` datetime DEFAULT NULL COMMENT '修改时间',
   `update_by` varchar(50) DEFAULT NULL COMMENT '修改人',
+  `is_delete` varchar(25) COLLATE utf8mb4_unicode_ci DEFAULT 'ENABLE' COMMENT '是否删除 DISABLE:已删除 ENABLE:未删除',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='用户基本信息表';
 

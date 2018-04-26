@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.NotBlank;
 
+import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
 /**
@@ -16,10 +17,11 @@ import java.time.LocalDateTime;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class AuthUserInfoDTO {
+public class UpdateAuthUserInfoDTO {
 
     //主键
-    @ApiModelProperty(value = "主键", example = "", hidden = true)
+    @ApiModelProperty(value = "主键", example = "")
+    @NotNull(message = "IDEN_ERR_0009")
     private Long id;
 
     //用户id
@@ -35,14 +37,6 @@ public class AuthUserInfoDTO {
     @ApiModelProperty(value = "用户联系电话", example = "")
     @NotBlank(message = "IDEN_ERR_0006")
     private String userPhone;
-
-    // 创建时间
-    @ApiModelProperty(value = "创建时间", example = "", hidden = true)
-    private LocalDateTime createTime;
-
-    //创建人
-    @ApiModelProperty(value = "创建人", example = "", hidden = true)
-    private String createBy;
 
     //修改时间
     @ApiModelProperty(value = "修改时间", example = "", hidden = true)

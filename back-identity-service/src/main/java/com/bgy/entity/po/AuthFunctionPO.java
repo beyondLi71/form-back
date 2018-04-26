@@ -7,26 +7,32 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 
 /**
- * @author yyg
- * @date 2018/4/23 17:32
- * @desc 用户基本信息实体
- */
+* @author yyg
+* @date 2018/4/26 11:12
+* @desc  权限实体
+*/
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class AuthUserInfoPO {
+public class AuthFunctionPO {
 
     //主键
     private Long id;
 
-    //用户id
-    private Long userId;
+    //菜单名称
+    private String name;
 
-    //用户名字
-    private String userName;
+    //父id
+    private Long parentId;
 
-    //用户联系电话
-    private String userPhone;
+    //请求路径
+    private String url;
+
+    //排序
+    private Integer serialNum;
+
+    //是否是顶级菜单
+    private String accordion;
 
     // 创建时间
     private LocalDateTime createTime;
@@ -40,6 +46,8 @@ public class AuthUserInfoPO {
     //修改人
     private String updateBy;
 
-    //是否删除 DISABLE:已删除 ENABLE:未删除
-    private String isDelete;
+    //级别
+    private Integer level;
+
+
 }

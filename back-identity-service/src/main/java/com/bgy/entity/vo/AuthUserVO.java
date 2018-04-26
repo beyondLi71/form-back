@@ -1,5 +1,6 @@
 package com.bgy.entity.vo;
 
+import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -19,6 +20,7 @@ public class AuthUserVO {
     private String name;
 
     //token
+
     private String token;
 
 }

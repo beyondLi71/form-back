@@ -1,4 +1,4 @@
-package com.bgy.common.utils;
+package com.bgy.common.utils.cookie;
 
 import org.springframework.beans.factory.annotation.Value;
 
@@ -14,7 +14,7 @@ import java.util.UUID;
  * @date 2018/4/23 22:37
  * @desc token 创建工具类
  */
-public class TokenUtils {
+public class CookieUtils {
 
     @Value("${key}")
     String key;
