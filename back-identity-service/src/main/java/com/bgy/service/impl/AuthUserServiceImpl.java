@@ -63,17 +63,20 @@ public class AuthUserServiceImpl implements AuthUserService {
     @Value("${hour}")
     Long hour;
 
+    //不受权限控制的路径
+    @Value("${not.interceptor.path}")
+    String notInterceptorpath;
+
     /**
      * 登录验证方法
      *
      * @param loginDTO
      * @param response
      * @return AbstractApiResult
-     * @throws Exception
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public AbstractApiResult loginCheck(AuthUserLoginDTO loginDTO, HttpServletResponse response) throws Exception {
+    public AbstractApiResult loginCheck(AuthUserLoginDTO loginDTO, HttpServletResponse response) {
         //String md5Pwd = MD5Utils.md5Bit32Lower(loginDTO.getPwd());
         loginDTO.setIsDelete(DeleteEnum.ENABLE.getStatus());
         AuthUserPO user = authUserQueryMapper.selectLoginUserInfoOne(loginDTO);
@@ -123,12 +126,17 @@ public class AuthUserServiceImpl implements AuthUserService {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public AuthUserInfoPO getLoginUserInfo(String token) {
+    public AuthUserInfoPO getLoginUserInfo(String token, String requestUrl) {
         //获取用户token信息
         AuthUserTokenVO authUserTokenVO = continuedLifeForToken(token);
         //查询用户信息
         AuthUserInfoDTO authUserInfoDTO = MapperUtils.mapperBean(authUserTokenVO, AuthUserInfoDTO.class);
         AuthUserInfoPO authUserInfoPO = authUserQueryMapper.selectUserInfoOne(authUserInfoDTO);
+        //获取用权限
+        List<AuthFunctionVO> authFunctionVOS = authUserQueryMapper.getFunctioChild(authUserInfoPO.getUserId());
+        //检查用户的请求url是否合法
+        checkFucnitonNameOnly(authFunctionVOS, requestUrl);
+
         return authUserInfoPO;
     }
 
@@ -140,6 +148,9 @@ public class AuthUserServiceImpl implements AuthUserService {
      */
     private AuthUserTokenVO continuedLifeForToken(String token) {
         AuthUserTokenVO authUserTokenVO = authUserQueryMapper.selectTokenInfoOne(token);
+        if (authUserTokenVO == null) {
+            throw exceptionManager.createByCode("IDEN_ERR_0021");
+        }
         Duration duration = Duration.between(authUserTokenVO.getUserCreateTime(), LocalDateTime.now());
         Long hours = duration.toHours();
         if (hours > hour) {
@@ -153,7 +164,31 @@ public class AuthUserServiceImpl implements AuthUserService {
         return authUserTokenVO;
     }
 
+    private void checkFucnitonNameOnly(List<AuthFunctionVO> authFunctionVOS, String requestUrl) {
+        String[] string1 = requestUrl.split("/");
+        String url = "/" + string1[1] + "/" + string1[2];
+        if (!url.equals(notInterceptorpath)) {
+            if (authFunctionVOS.size() == 0) {
+                throw exceptionManager.createByCode("IDEN_ERR_0022");
+            }
 
+            List<String> list = new ArrayList<String>();
+            authFunctionVOS.stream().forEach(s -> {
+                list.add(s.getUrl());
+            });
+            boolean isIn = list.contains(url);
+            if (Objects.equals(isIn, false)) {
+                throw exceptionManager.createByCode("IDEN_ERR_0020");
+            }
+        }
+    }
+
+
+    /**
+     * 检查登录名唯一
+     *
+     * @param name
+     */
     private void checkLoginNmaeOnly(String name) {
         int count = authUserQueryMapper.checkLoginNameOnly(name);
         if (count > 0) {
@@ -161,13 +196,23 @@ public class AuthUserServiceImpl implements AuthUserService {
         }
     }
 
-    private void checkUserNameOnly(String userName) {
-        int count = authUserQueryMapper.checkUserNameOnly(userName);
+    /**
+     * 检查用户名唯一
+     *
+     * @param userName
+     */
+    private void checkUserNameOnly(String userName, String isDelete) {
+        int count = authUserQueryMapper.checkUserNameOnly(userName, isDelete);
         if (count > 0) {
             throw exceptionManager.createByCode("IDEN_ERR_0013");
         }
     }
 
+    /**
+     * 检查角色唯一
+     *
+     * @param name
+     */
     private void checkRoleNameOnly(String name) {
         int count = authUserQueryMapper.checkRoleNameOnly(name);
         if (count > 0) {
@@ -175,6 +220,11 @@ public class AuthUserServiceImpl implements AuthUserService {
         }
     }
 
+    /**
+     * 有用户再使用该角色，不可以删除
+     *
+     * @param roleId
+     */
     private void checkUserQuoteRolenly(Long roleId) {
         int count = authUserQueryMapper.checkUserQuoteRolenly(roleId);
         if (count > 0) {
@@ -182,6 +232,17 @@ public class AuthUserServiceImpl implements AuthUserService {
         }
     }
 
+    /**
+     * 检查菜单名称唯一
+     *
+     * @param name
+     */
+    private void checkFucnitonNameOnly(String name) {
+        int count = authUserQueryMapper.checkFunctionNameOnly(name);
+        if (count > 0) {
+            throw exceptionManager.createByCode("IDEN_ERR_0017");
+        }
+    }
 
     /**
      * 添加用户信息
@@ -194,8 +255,8 @@ public class AuthUserServiceImpl implements AuthUserService {
     public void addUserInfo(AddUserDTO userDTO) throws Exception {
         //检查登录名唯一
         checkLoginNmaeOnly(userDTO.getAuthUserLoginDTO().getName());
-        //检查用户名唯一
-        checkUserNameOnly(userDTO.getAuthUserInfoDTO().getUserName());
+//        //检查用户名唯一
+//        checkUserNameOnly(userDTO.getAuthUserInfoDTO().getUserName());
         //添加 用户登录信息
         String md5Pwd = MD5Utils.md5Bit32Lower(userDTO.getAuthUserLoginDTO().getPwd());
         userDTO.getAuthUserLoginDTO().setPwd(md5Pwd);
@@ -233,8 +294,8 @@ public class AuthUserServiceImpl implements AuthUserService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void updateUserInfo(UpdateAuthUserInfoDTO updateAuthUserInfoDTO) {
-        //检查用户名唯一
-        checkUserNameOnly(updateAuthUserInfoDTO.getUserName());
+//        //检查用户名唯一
+//        checkUserNameOnly(updateAuthUserInfoDTO.getUserName());
         //修改用户基本信息
         AuthUserInfoPO authUserInfoPO = MapperUtils.mapperBean(updateAuthUserInfoDTO, AuthUserInfoPO.class);
         authUserInfoPO.setUpdateTime(LocalDateTime.now());
@@ -271,7 +332,7 @@ public class AuthUserServiceImpl implements AuthUserService {
         authUserInfoPO.setIsDelete(DeleteEnum.DISABLE.getStatus());
         authUserCUDMapper.deteleAuthUserInfo(authUserInfoPO);
         //TODO 如果删除用户是否需要删除 用户角色关联表数据
-         authUserCUDMapper.deleteUserRole(deleteAuthUserInfoDTO.getId());
+        authUserCUDMapper.deleteUserRole(deleteAuthUserInfoDTO.getId());
     }
 
     /**
@@ -435,6 +496,14 @@ public class AuthUserServiceImpl implements AuthUserService {
 
     }
 
+    private List<AuthFunctionVO> getFunctionByRoleId(GetAuthFunctionForRoleDTO getAuthFunctionForRoleDTO) {
+        List<AuthFunctionVO> authFunctionVOS = authUserQueryMapper.getFunctioforRole(getAuthFunctionForRoleDTO.getRoleId());
+//        List<AuthFunctionVO> treeList = createMenuTreeList(authFunctionVOS);
+        return authFunctionVOS;
+
+    }
+
+
     public List<AuthFunctionVO> createMenuTreeList(List<AuthFunctionVO> rootMenu) {
         // 最后的结果
         List<AuthFunctionVO> menuList = new ArrayList<AuthFunctionVO>();
@@ -456,10 +525,8 @@ public class AuthUserServiceImpl implements AuthUserService {
     /**
      * 递归查找子菜单
      *
-     * @param id
-     *            当前菜单id
-     * @param rootMenu
-     *            要查找的列表
+     * @param id       当前菜单id
+     * @param rootMenu 要查找的列表
      * @return
      */
     private List<AuthFunctionVO> getChild(Long id, List<AuthFunctionVO> rootMenu) {
@@ -488,22 +555,21 @@ public class AuthUserServiceImpl implements AuthUserService {
     }
 
     /**
-     *配权限时回显数据，返回所有系统权限方法
+     * 配权限时回显数据，返回所有系统权限方法
      *
-     * @param getAuthFunctionDTO
+     * @param getAuthFunctionForRoleDTO
      * @return
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public AuthFunctionForUserAndAllVO getAllfunction(GetAuthFunctionDTO getAuthFunctionDTO) {
-        //所要非配人的拥有权限（回显数据）
-        List<AuthFunctionVO> assginFuncUser = getFunctionByUserId(getAuthFunctionDTO);
-
+    public AuthFunctionForUserAndAllVO getAllfunction(GetAuthFunctionForRoleDTO getAuthFunctionForRoleDTO) {
+        //所要非配角色的拥有权限（回显数据）
+        List<AuthFunctionVO> assginFuncUser = getFunctionByRoleId(getAuthFunctionForRoleDTO);
         //查询所有权限
         List<AuthFunctionVO> authFunctionVOS = authUserQueryMapper.getAllFunctio();
         //递归操作
         List<AuthFunctionVO> treeList = createMenuTreeList(authFunctionVOS);
-        AuthFunctionForUserAndAllVO authFunctionForUserAndAllVO = new  AuthFunctionForUserAndAllVO();
+        AuthFunctionForUserAndAllVO authFunctionForUserAndAllVO = new AuthFunctionForUserAndAllVO();
         authFunctionForUserAndAllVO.setAllFunctions(treeList);
         authFunctionForUserAndAllVO.setUserfucntions(assginFuncUser);
         return authFunctionForUserAndAllVO;
@@ -511,20 +577,69 @@ public class AuthUserServiceImpl implements AuthUserService {
 
     /***
      * 分配权限方法
-     * @param addAuthRoleFunctionDTO
+     * @param  addAuthRoleFunctionDTO
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void addAuthRoleFucntion(AddAuthRoleFunctionDTO addAuthRoleFunctionDTO) {
+    public void addAuthRoleFunction(AddAuthRoleFunctionDTO addAuthRoleFunctionDTO) {
         authUserCUDMapper.deleteRoleFuncion(addAuthRoleFunctionDTO.getRoleId());
-        List<AuthRoleFunctionPO> authRoleFunctionPOS = new ArrayList<AuthRoleFunctionPO>();
-        addAuthRoleFunctionDTO.getFunctionIds().stream().forEach(s -> {
-            AuthRoleFunctionPO authRoleFunctionPO = new AuthRoleFunctionPO();
-            authRoleFunctionPO.setRoleId(addAuthRoleFunctionDTO.getRoleId());
-            authRoleFunctionPO.setFunctionId(s);
-            authRoleFunctionPOS.add(authRoleFunctionPO);
-        });
-        authUserCUDMapper.addRoleFunction(authRoleFunctionPOS);
+        if (addAuthRoleFunctionDTO.getFunctionIds().size() > 0) {
+            List<AuthRoleFunctionPO> authRoleFunctionPOS = new ArrayList<AuthRoleFunctionPO>();
+            addAuthRoleFunctionDTO.getFunctionIds().stream().forEach(s -> {
+                AuthRoleFunctionPO authRoleFunctionPO = new AuthRoleFunctionPO();
+                authRoleFunctionPO.setRoleId(addAuthRoleFunctionDTO.getRoleId());
+                authRoleFunctionPO.setFunctionId(s);
+                authRoleFunctionPOS.add(authRoleFunctionPO);
+            });
+            authUserCUDMapper.addRoleFunction(authRoleFunctionPOS);
+        }
     }
+
+    /**
+     * 权限分页查询
+     *
+     * @param getAuthFunctionListDTO
+     * @param pageParam
+     * @return
+     */
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public PageResult getFunctionInfoList(GetAuthFunctionListDTO getAuthFunctionListDTO, PageParam pageParam) {
+        Page<AuthUserInfoListVO> page = PageHelper.startPage(pageParam.getP(), pageParam.getC());
+        //查询数据
+        List<AuthFunctionVO> authUserInfoListVOList = authUserQueryMapper.getAllFunctioListPage(getAuthFunctionListDTO);
+        //取分页信息
+        int total = (int) page.getTotal();
+        //分页类
+        PageResult pageResult = pageResultFactory.createPageResult(pageParam.getP(), total, authUserInfoListVOList);
+        return pageResult;
+    }
+
+    /**
+     * 添加权限方法
+     *
+     * @param addAuthFunctionDTO
+     */
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void addAuthFunction(AddAuthFunctionDTO addAuthFunctionDTO) {
+        //检查权限名唯一
+        checkFucnitonNameOnly(addAuthFunctionDTO.getName());
+        //添加权限
+        AuthFunctionPO authFunctionPO = MapperUtils.mapperBean(addAuthFunctionDTO, AuthFunctionPO.class);
+        authFunctionPO.setCreateTime(LocalDateTime.now());
+        authUserCUDMapper.addFucntion(authFunctionPO);
+    }
+
+    /**
+     * 获取所有父节点
+     *
+     * @return
+     */
+    public List<AuthFunctionVO> getALLParentNode() {
+        List<AuthFunctionVO> parentNodeList = authUserQueryMapper.getALLParentNode();
+        return parentNodeList;
+    }
+
 
 }

@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 /**
  * @author yyg
@@ -46,7 +47,7 @@ public class UserRolePermissionController {
         return AbstractApiResult.success("success");
     }
 
-    @RequestMapping(value = "/user/getuserinfobyid{id}", method = RequestMethod.GET)
+    @RequestMapping(value = "/user/getuserinfobyid/{id}", method = RequestMethod.GET)
     @ApiOperation(value = "单个用户获取信息方法", produces = "application/json")
     public AbstractApiResult getUserInfoById(@PathVariable Long id) {
         AuthUserInfoVO result = authUserService.getUserInfoOne(id);
@@ -115,7 +116,7 @@ public class UserRolePermissionController {
         return AbstractApiResult.success(result);
     }
 
-    @RequestMapping(value = "/role/assignrole", method = RequestMethod.PUT)
+    @RequestMapping(value = "/user/assignrole", method = RequestMethod.PUT)
     @ApiOperation(value = "分配角色方法", produces = "application/json")
     public AbstractApiResult assignRole(@RequestBody AddAuthUserRoleDTO addAuthUserRoleDTO) {
         authUserService.addAuthUserRole(addAuthUserRoleDTO);
@@ -123,27 +124,51 @@ public class UserRolePermissionController {
     }
 
 
-    @RequestMapping(value = "/user/getloginuserfunction", method = RequestMethod.POST)
-    @ApiOperation(value = "获取当前登录人的信息以及权限方法", produces = "application/json")
-    public AbstractApiResult getLoginUserFunction() {
-        GetAuthFunctionDTO getAuthFunctionDTO = new GetAuthFunctionDTO();
-        getAuthFunctionDTO.setUserId(userBaseInfoDTO.getId());
-        AuthUserGetFuntionInfoVO result = authUserService.getLoginUserFuntionIn(getAuthFunctionDTO);
-        return AbstractApiResult.success(result);
-    }
+//    @RequestMapping(value = "/user/getloginuserfunction", method = RequestMethod.GET)
+//    @ApiOperation(value = "获取当前登录人的信息以及权限方法", produces = "application/json")
+//    public AbstractApiResult getLoginUserFunction() {
+//        GetAuthFunctionDTO getAuthFunctionDTO = new GetAuthFunctionDTO();
+//        getAuthFunctionDTO.setUserId(userBaseInfoDTO.getId());
+//        AuthUserGetFuntionInfoVO result = authUserService.getLoginUserFuntionIn(getAuthFunctionDTO);
+//        return AbstractApiResult.success(result);
+//    }
 
     @RequestMapping(value = "/function/getallfunctionforassignuser", method = RequestMethod.POST)
-    @ApiOperation(value = "获取当前需要分配人的权限回显，同时获取所有权限方法", produces = "application/json")
-    public AbstractApiResult getAssignUserFAndAllFunc(@RequestBody  GetAuthFunctionDTO getAuthFunctionDTO) {
-        AuthFunctionForUserAndAllVO result = authUserService.getAllfunction(getAuthFunctionDTO);
+    @ApiOperation(value = "获取当前需要分配角色的权限回显，同时获取所有权限方法", produces = "application/json")
+    public AbstractApiResult getAssignUserFAndAllFunc(@RequestBody  GetAuthFunctionForRoleDTO getAuthFunctionForRoleDTO) {
+        AuthFunctionForUserAndAllVO result = authUserService.getAllfunction(getAuthFunctionForRoleDTO);
         return AbstractApiResult.success(result);
     }
 
-    @RequestMapping(value = "/function/assignfucntion", method = RequestMethod.POST)
-    @ApiOperation(value = "分配权限方法", produces = "application/json")
-    public AbstractApiResult assignFucntion(@RequestBody AddAuthRoleFunctionDTO addAuthRoleFunctionDTO) {
-        authUserService.addAuthRoleFucntion(addAuthRoleFunctionDTO);
+    @RequestMapping(value = "/role/assignfunction", method = RequestMethod.POST)
+        @ApiOperation(value = "分配权限方法", produces = "application/json")
+        public AbstractApiResult assignFunction(@RequestBody AddAuthRoleFunctionDTO addAuthRoleFunctionDTO) {
+            authUserService.addAuthRoleFunction(addAuthRoleFunctionDTO);
+            return AbstractApiResult.success("success");
+    }
+
+    @RequestMapping(value = "/function/getfunctionlist", method = RequestMethod.POST)
+    @ApiOperation(value = "查看权限列表", produces = "application/json")
+    public AbstractApiResult getFunctionist(
+                                            @RequestBody GetAuthFunctionListDTO getAuthFunctionListDTO,
+                                            @ModelAttribute PageParam pageParam) {
+        PageResult pageResult = authUserService.getFunctionInfoList(getAuthFunctionListDTO, pageParam);
+        return AbstractApiResult.success(pageResult);
+    }
+
+    @RequestMapping(value = "/function/addfunction", method = RequestMethod.POST)
+    @ApiOperation(value = "新增权限方法", produces = "application/json")
+    public AbstractApiResult addFunction(@RequestBody AddAuthFunctionDTO addAuthFunctionDTO) {
+        addAuthFunctionDTO.setCreateBy(userBaseInfoDTO.getId().toString());
+        authUserService.addAuthFunction(addAuthFunctionDTO);
         return AbstractApiResult.success("success");
+    }
+
+    @RequestMapping(value = "/function/getallparentnode", method = RequestMethod.GET)
+    @ApiOperation(value = "获取所有父节点信息", produces = "application/json")
+    public AbstractApiResult getALLParentNode() {
+        List<AuthFunctionVO> result = authUserService.getALLParentNode();
+        return AbstractApiResult.success(result);
     }
 
 }

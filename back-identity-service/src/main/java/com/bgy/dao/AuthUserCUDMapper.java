@@ -136,5 +136,13 @@ public interface AuthUserCUDMapper {
             + "</script>")
     void addRoleFunction(@Param("list") List<AuthRoleFunctionPO> authRoleFunctionPOS);
 
+    /**
+     * 添加权限
+     *
+     * @param authFunctionPO
+     */
+    @Insert(" insert into auth_function (name, parent_id, url,accordion,create_time, create_by)"
+            + " values (#{name}, #{parentId},#{url}, #{accordion},#{createTime}, #{createBy})")
+    void addFucntion(AuthFunctionPO authFunctionPO);
 }
 
