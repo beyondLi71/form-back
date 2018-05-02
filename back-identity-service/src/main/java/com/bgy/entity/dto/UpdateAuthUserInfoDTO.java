@@ -30,7 +30,7 @@ public class UpdateAuthUserInfoDTO {
 
     //用户名字
     @ApiModelProperty(value = "用户名称", example = "")
-    @NotBlank(message = "IDEN_ERR_0002")
+    @NotBlank(message = "IDEN_ERR_0001")
     private String userName;
 
     //用户联系电话

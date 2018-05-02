@@ -24,6 +24,10 @@ public class AuthUserInfoListVO {
     @ApiModelProperty(value = "主键", example = "")
     private Long id;
 
+    //主键
+    @ApiModelProperty(value = "userId", example = "")
+    private Long userId;
+
     //角色名称
     @ApiModelProperty(value = "用户名称", example = "")
     private String userName;

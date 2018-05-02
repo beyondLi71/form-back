@@ -4,6 +4,7 @@ import com.bgy.common.dto.UserBaseInfoDTO;
 import com.bgy.common.utils.exception.ExceptionManager;
 import com.bgy.entity.po.AuthUserInfoPO;
 import com.bgy.service.AuthUserService;
+import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.springframework.stereotype.Component;
@@ -43,18 +44,18 @@ public class GetLoginIngfoAop {
      */
     @Before("execution (* com.bgy.controller..*(..))  &&"
             + "!execution(* com.bgy.controller.LoginController.*(..))")
-    public Object beforeCheckToken() throws Throwable {
+    public void beforeCheckToken() throws Throwable {
+         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
+        String requestURI = request.getRequestURI();
+
         //获取token
         String token = getToken();
-        AuthUserInfoPO authUserInfoPO = authUserService.getLoginUserInfo(token);
+        AuthUserInfoPO authUserInfoPO = authUserService.getLoginUserInfo(token, requestURI);
        //用户登录表的主键id也是用户基本信息的userId
         userBaseInfoDTO.setId(authUserInfoPO.getUserId());
         userBaseInfoDTO.setUserName(authUserInfoPO.getUserName());
         userBaseInfoDTO.setUserPhone(authUserInfoPO.getUserPhone());
-        return authUserInfoPO;
     }
-
-
 
     /***
      * 通过request 获取token

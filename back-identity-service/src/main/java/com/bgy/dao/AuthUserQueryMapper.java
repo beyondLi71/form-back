@@ -70,7 +70,7 @@ public interface AuthUserQueryMapper {
      * @return
      */
     @Select("<script> SELECT a.id as id,a.user_name AS userName, b.name AS loginName,"
-            + "a.user_phone AS userPhone,a.create_time AS createTime,a.is_delete as isDelete"
+            + "a.user_phone AS userPhone,a.create_time AS createTime,a.is_delete as isDelete,a.user_id as userId"
             + " FROM  auth_user_info AS a LEFT JOIN auth_user AS b ON a.user_id=b.id"
             + "<where>"
             + "<if test = \"userPhone != null and userPhone != ''\" >and a.user_phone like \"%\"#{userPhone}\"%\"</if>"
@@ -122,8 +122,8 @@ public interface AuthUserQueryMapper {
      * @param userName
      * @return
      */
-    @Select("SELECT  COUNT(1) FROM  auth_user_info WHERE user_name=#{userName}")
-    int checkUserNameOnly(String userName);
+    @Select("SELECT  COUNT(1) FROM  auth_user_info WHERE user_name=#{userName} and is_delete=#{isDelete}")
+    int checkUserNameOnly(String userName, String isDelete);
 
     /**
      * 检查角色名称唯一性
@@ -169,4 +169,50 @@ public interface AuthUserQueryMapper {
             + "</where>"
             + "</script>")
     List<AuthFunctionVO> getAllFunctio();
+
+
+
+    /**
+     * 所有菜单权限分页方法
+     * @return  List<AuthFunctionVO>
+     */
+    @Select(" <script> SELECT id, name, parent_id as  parentId , url,create_time as createTime  "
+            +  "FROM  auth_function "
+            + "<where>"
+            + "<if test = \"name != null and name != ''\" >and name like \"%\"#{name}\"%\"</if>"
+            + "<if test = \"url != null and url != ''\" >and url like \"%\"#{url}\"%\"</if>"
+            + "<if test = \"createTime != null \" >and create_time = #{createTime}</if>"
+            + "</where>"
+            + "</script>")
+    List<AuthFunctionVO> getAllFunctioListPage(GetAuthFunctionListDTO getAuthFunctionListDTO);
+
+    /**
+     * 检查权限名称唯一性
+     *
+     * @param name
+     * @return
+     */
+    @Select("SELECT  COUNT(1) FROM  auth_function WHERE NAME=#{name}")
+    int checkFunctionNameOnly(String name);
+
+
+    /**
+     * 通过 角色id获取角色拥有的权限
+     * @param roleId
+     * @return
+     */
+    @Select("SELECT function_id as id  FROM  auth_role_function  WHERE role_id=#{roleId} ")
+    List<AuthFunctionVO> getFunctioforRole(Long  roleId);
+
+
+    /**
+     * 获取所有父节点
+     *
+     * @return
+     */
+    @Select("SELECT id,name FROM  auth_function  WHERE parent_id=0 ")
+    List<AuthFunctionVO> getALLParentNode();
+
+
+
 }

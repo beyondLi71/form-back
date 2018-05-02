@@ -10,16 +10,16 @@ import javax.validation.constraints.NotNull;
 /**
 * @author yyg
 * @date 2018/4/26 11:12
-* @desc  权限实体
+* @desc  根据角色获取权限实体
 */
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class GetAuthFunctionDTO {
+public class GetAuthFunctionForRoleDTO {
 
     @ApiModelProperty(value = "角色id", example = "")
     @NotNull(message = "IDEN_ERR_0016")
-    private Long userId;
+    private Long roleId;
 
     @ApiModelProperty(value = "是否为根节点", example = "", hidden = true)
     private  String accordion;

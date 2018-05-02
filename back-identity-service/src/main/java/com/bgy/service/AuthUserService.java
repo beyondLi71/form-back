@@ -11,6 +11,7 @@ import org.springframework.validation.annotation.Validated;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import java.util.List;
 
 /**
  * @author yyg
@@ -24,7 +25,7 @@ public interface AuthUserService {
 
     void logout(HttpServletRequest request, HttpServletResponse response);
 
-    AuthUserInfoPO getLoginUserInfo(String token);
+    AuthUserInfoPO getLoginUserInfo(String token, String requestUrl);
 
     void addUserInfo(@Valid AddUserDTO userDTO) throws Exception;
 
@@ -52,8 +53,14 @@ public interface AuthUserService {
 
     AuthUserGetFuntionInfoVO getLoginUserFuntionIn(GetAuthFunctionDTO getAuthFunctionDTO);
 
-    AuthFunctionForUserAndAllVO getAllfunction(@Valid GetAuthFunctionDTO getAuthFunctionDTO);
+    AuthFunctionForUserAndAllVO getAllfunction(@Valid GetAuthFunctionForRoleDTO getAuthFunctionForRoleDTO);
 
-     void  addAuthRoleFucntion(AddAuthRoleFunctionDTO addAuthRoleFunctionDTO);
+    void addAuthRoleFunction(AddAuthRoleFunctionDTO addAuthRoleFunctionDTO);
+
+    PageResult getFunctionInfoList(GetAuthFunctionListDTO getAuthFunctionListDTO, PageParam pageParam);
+
+    void addAuthFunction(@Valid AddAuthFunctionDTO addAuthFunctionDTO);
+
+    List<AuthFunctionVO> getALLParentNode();
 
 }

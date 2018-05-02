@@ -85,7 +85,7 @@ public class interfaceManageController {
      * @desc  .接口日志条件分页查询
      */
     @ApiOperation(value = "接口日志条件分页查询", produces = "application/json")
-    @PostMapping (value = "/managedetail/queryinterfacemanagedetailbykeyword")
+    @PostMapping (value = "/manage/queryinterfacemanagedetailbykeyword")
     public AbstractApiResult queryInterfaceManageDetailByKeyword(@RequestBody InterfaceLogKeyWordDTO interfaceLogKeyWordDTO, @ModelAttribute PageParam pageParam){
         PageResult<InterfaceMangerDetailVO> resultData = interfaceManagerService.queryInterfaceManageDetailByKeyword(interfaceLogKeyWordDTO, pageParam);
         return AbstractApiResult.success(resultData);
@@ -96,7 +96,7 @@ public class interfaceManageController {
      * @desc  .根据日志id 查询接口名称入参与出参
      */
     @ApiOperation(value = "根据日志id 查询接口名称入参与出参", produces = "application/json")
-    @GetMapping (value = "/managedetail/getinterfacemanagedetailbyid/{id}")
+    @GetMapping (value = "/manage/getinterfacemanagedetailbyid/{id}")
     public AbstractApiResult getInterfaceManageDetailById(@PathVariable Integer id){
         List<InterfaceLogByIdVO> result = interfaceManagerService.getInterfaceManageDetailById(id);
         return AbstractApiResult.success(result);
